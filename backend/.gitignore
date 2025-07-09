@@ -1,0 +1,20 @@
+# Ignorar dependências do Node
+# Esta pasta é recriada com 'npm install'
+node_modules/
+
+# Ignorar arquivos de ambiente e segredos
+# Contém senhas, chaves de API e outras informações sensíveis
+.env
+data/*.json
+
+# Ignorar arquivos de Log
+# São gerados em tempo de execução
+*.log
+npm-debug.log*
+
+# Ignorar arquivos de Sistema Operacional
+.DS_Store
+Thumbs.db
+
+# Ignorar configurações do editor de código (VSCode)
+.vscode/
