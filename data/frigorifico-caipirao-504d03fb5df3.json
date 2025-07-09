@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "frigorifico-caipirao",
+  "private_key_id": "504d03fb5df39556ce7f026c8b01e7f1c1134d30",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDWiStXPohRK1Za\nmkM3xRGwXiPAgBCPaTVERs+LSOcDAv1k1w5QCQWRpPKWxsd2m/qz2quFDYge5s9r\nB2qnOrYz4gjFsco4Qj0bXgySwFH5FvWxFkpmNbniOkk6jy17uSKX+labj84Jlp1V\nmL4Xh8Jj8a8Qys2sTdIaHvGYYcjL7dMPJf6izXP8pBm+QKdRfuAgT4ZkTztHgUH2\nGqEOE8bib4Ec7qwMI0Lm6FEL0n9heHIQhW8RMfxvICM0i5jMuLkYjm8uL5qvfb0j\ng0XyYWb2X/M46CKuLRT2cyDaXMiKCWrXZ8ZNCPPdpv7rAPvCh3r+eFLV1H92jegQ\nXYcmVqiFAgMBAAECggEAAqLEaaKwveZWRROlZtRCtHWpai1qZqvHfS07p5vom1ty\n9pqf66SJLYH/1AN2l/ZiP7tjoc//KlZAWb/7KSs2hkGbYbTek+uma2HadRUBw+7j\nefBgCFq5kwRIefyug9lE7WYkkjU3PTFrSJwjHYjzKX4GQc1daCXYSaBCT+fyGUG9\nP5l20n+a13hU9MqiXew7flh3Gd2DfhzViiyZQwjydtrPb3RqhAtikJSvzGG9h0y8\nrNYveq7JB3gahNyzHVgmCjTHywdzMF24QQgnhp/AHaiHuWHMYdkiwwllDoo7zCzE\n8QLuudv/p6ZEhbc0vFsxVV0mFXH88r1/Jq4QMGcp0QKBgQD6v/a0ksIwRpew/oYi\nvbURBZ7o/F8go6pqVre5qbqHAC8JUqd36n8EZJgxGWmOnJlc0RILT/5sTHDN2NcY\nKgdcy9iukcCFJ8tG14M3GlgivK6/ghhwUtrixsjUY8nFNzOOfT9X3SUrNXvHF12T\neTxcz2ldnio9V6bey49m+MeFMQKBgQDbBxiL5WSleqCtzsZ4NnFRKMfOShzWPB+n\ncaFYdsRAtxNO7j5GhbwJdcEKCB+LJjv461kczwJkav2euVRVmCBHBIQnmC3onAel\n+BOgxG49o7ixdYV4zJIy1n8OY6u2ppTS1vPRKRGfs7x8jN6DwlW3n22Gadl86Q5x\nGRv0oauTlQKBgQCzbYnrzNiIEvuY+4igc3+NnqgHsA+iG3tmfIcbpAiFcew2j56m\ngHZDfngpKjYOhqB3emOfFK7KcCiIJBJGiEycaoGy6TkKD1+2YaDTXVaUBNBG2aED\nP0bB39z1njJTnRyXaahaBzUBplPcMywSyz4Wa5TKGNPA8WfHJYKH/J1JAQKBgQC/\nb49Lzv7OB8VixMUBkwwuFIe2zV4w/bHpB08vY/caXSl6Jo+10fPNDOfhXcI8O/nV\nEdb8cA62ODFeRrvoaCNmDxN3C/KsSZwBuzdkn+t+4pduO7qiH6N03beFmyYdabHQ\nKmJGoS+vN0h6UCG4ZeXHrYfsIJ4gKA8gWQLvKVMulQKBgQCKJxEzsWRICNRq/mUe\ndwNNGfAC92AVzPDj40TqoOi/3TrBEUyDXg2UHFyNs0Rzdtvwuv8UMg3Fl+c4g1bg\nvmwhV+3wSiS1nXZL7EutSj9CT3J6VkJliToPWR4lVAJy7ThGLZ99cK6WKPpJWj+i\nvB89ugmSrzzHjbmsp2Qlg+FRQA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "sheets-api-service@frigorifico-caipirao.iam.gserviceaccount.com",
+  "client_id": "102279845834062036299",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sheets-api-service%40frigorifico-caipirao.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
