@@ -11,12 +11,16 @@ const PORT = process.env.PORT || 3000;
 app.use(cors()); // Habilita o CORS para todas as rotas
 app.use(express.json()); // Habilita o servidor a receber dados em formato JSON no corpo das requisições POST
 
-// --- Configuração da Autenticação (igual a antes) ---
-const KEYFILEPATH = path.join(__dirname, '../data/frigorifico-caipirao-504d03fb5df3.json');
+// --- Configuração da Autenticação ---
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
+// Lógica para usar as credenciais do Render ou o ficheiro local
+const creds = process.env.GOOGLE_CREDENTIALS ? 
+              JSON.parse(process.env.GOOGLE_CREDENTIALS) : 
+              require(path.join(__dirname, '../data/frigorifico-caipirao-504d03fb5df3.json'));
+
 const auth = new google.auth.GoogleAuth({
-    keyFile: KEYFILEPATH,
+    credentials: creds,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
