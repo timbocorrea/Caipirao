@@ -162,6 +162,33 @@ app.post('/api/movimentacoes', async (req, res) => {
     }
 });
 
+// Rota para ler dados da aba _Precos
+app.get('/api/precos', async (req, res) => {
+    try {
+        const data = await getSheetData('_Precos'); // Usando o nome da sua aba
+        res.json(data);
+    } catch (error) {
+        console.error('Erro ao ler a aba _Precos:', error.message);
+        res.status(500).send('Erro no servidor ao ler a aba _Precos.');
+    }
+});
+
+// Rota para adicionar/atualizar dados na aba _Precos
+app.post('/api/precos', async (req, res) => {
+    try {
+        // A ordem aqui deve corresponder às suas colunas na planilha _Precos
+        const newRow = [
+            req.body.id_produto,   // Coluna A
+            req.body.nome_produto, // Coluna B
+            req.body.preco_venda   // Coluna C
+        ];
+        await appendSheetData('_Precos', newRow);
+        res.status(201).json({ message: 'Preço adicionado/atualizado com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao adicionar preço:', error.message);
+        res.status(500).send('Erro no servidor ao adicionar preço.');
+    }
+});
 
 // --- Inicia o Servidor ---
 app.listen(PORT, () => {
@@ -171,4 +198,5 @@ app.listen(PORT, () => {
     console.log(`  GET http://localhost:${PORT}/api/clientes`);
     console.log(`  GET http://localhost:${PORT}/api/produtos`);
     console.log(`  GET http://localhost:${PORT}/api/movimentacoes`);
+    console.log(`  GET http://localhost:${PORT}/api/precos`);
 });
