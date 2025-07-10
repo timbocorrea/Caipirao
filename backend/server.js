@@ -129,6 +129,39 @@ app.post('/api/produtos', async (req, res) => {
     }
 });
 
+// Rota para ler dados da aba _Movimentacoes
+app.get('/api/movimentacoes', async (req, res) => {
+    try {
+        const data = await getSheetData('_Movimentacoes'); // Usando o nome exato da sua aba
+        res.json(data);
+    } catch (error) {
+        console.error('Erro ao ler a aba _Movimentacoes:', error.message);
+        res.status(500).send('Erro no servidor ao ler a aba _Movimentacoes.');
+    }
+});
+
+// Rota para adicionar dados na aba _Movimentacoes
+app.post('/api/movimentacoes', async (req, res) => {
+    try {
+        // A ordem dos dados no array deve corresponder EXATAMENTE à ordem das colunas na sua planilha
+        const newRow = [
+            req.body.id_mov,      // Coluna A: ID Mov.
+            req.body.data,        // Coluna B: Data
+            req.body.tipo,        // Coluna C: Tipo (Entrada/Saída)
+            req.body.categoria,   // Coluna D: Categoria
+            req.body.descricao,   // Coluna E: Descrição
+            req.body.valor,       // Coluna F: Valor
+            req.body.responsavel, // Coluna G: Responsável
+            req.body.observacoes  // Coluna H: Observações
+        ];
+        await appendSheetData('_Movimentacoes', newRow);
+        res.status(201).json({ message: 'Movimentação adicionada com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao adicionar movimentação:', error.message);
+        res.status(500).send('Erro no servidor ao adicionar movimentação.');
+    }
+});
+
 
 // --- Inicia o Servidor ---
 app.listen(PORT, () => {
@@ -137,4 +170,5 @@ app.listen(PORT, () => {
     console.log(`  GET http://localhost:${PORT}/status`);
     console.log(`  GET http://localhost:${PORT}/api/clientes`);
     console.log(`  GET http://localhost:${PORT}/api/produtos`);
+    console.log(`  GET http://localhost:${PORT}/api/movimentacoes`);
 });
