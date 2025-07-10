@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchMovimentacoes();
         } else if (pageId === 'clientes') {
             fetchClientes();
+        } else if (pageId === 'produtos') {
+            fetchProdutos();
         }
     }
 
@@ -36,6 +38,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- LÓGICA DA PÁGINA DE PRODUTOS ---
+    const produtosContainer = document.getElementById('produtos-container');
+    const produtoForm = document.getElementById('add-produto-form');
+
+    async function fetchProdutos() {
+        try {
+            const response = await fetch('http://localhost:3000/api/produtos');
+            if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
+            const data = await response.json();
+            createTable(produtosContainer, data);
+        } catch (error) {
+            console.error('Erro ao buscar produtos:', error);
+            produtosContainer.innerHTML = '<p class="text-red-500">Falha ao carregar os dados dos produtos.</p>';
+        }
+    }
+
+    produtoForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(produtoForm);
+        const data = Object.fromEntries(formData.entries());
+        try {
+            const response = await fetch('http://localhost:3000/api/produtos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            if (!response.ok) throw new Error(`Erro ao enviar dados! Status: ${response.status}`);
+            alert('Produto adicionado com sucesso!');
+            produtoForm.reset();
+            fetchProdutos(); // Atualiza a tabela
+        } catch (error) {
+            console.error('Erro ao adicionar produto:', error);
+            alert('Falha ao adicionar produto.');
+        }
+    });
+
+
     // --- LÓGICA DA PÁGINA DE CLIENTES ---
     const clientesContainer = document.getElementById('clientes-container');
     const clienteForm = document.getElementById('add-cliente-form');
@@ -45,16 +84,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('http://localhost:3000/api/clientes');
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
-            displayClientes(data);
+            createTable(clientesContainer, data);
         } catch (error) {
             console.error('Erro ao buscar clientes:', error);
             clientesContainer.innerHTML = '<p class="text-red-500">Falha ao carregar os dados dos clientes.</p>';
         }
-    }
-
-    function displayClientes(data) {
-        // A função genérica de criar tabela será usada aqui também
-        createTable(clientesContainer, data);
     }
 
     clienteForm.addEventListener('submit', async (event) => {
@@ -78,10 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- LÓGICA DO DASHBOARD E MOVIMENTAÇÕES (CÓDIGO ANTERIOR) ---
+    // --- LÓGICA DO DASHBOARD E MOVIMENTAÇÕES ---
     const movimentacoesContainer = document.getElementById('movimentacoes-container');
     const movimentacaoForm = document.getElementById('add-movimentacao-form');
-    
     const totalEntradasEl = document.getElementById('total-entradas');
     const totalSaidasEl = document.getElementById('total-saidas');
     const saldoAtualEl = document.getElementById('saldo-atual');
