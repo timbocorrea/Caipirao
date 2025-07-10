@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Caipirão</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +21,35 @@
         </header>
 
         <main>
+<!-- Adicionar esta nova secção de Dashboard -->
+<section id="dashboard" class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Card Total de Entradas -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-sm font-medium text-slate-500">Total de Entradas</h3>
+        <p id="total-entradas" class="mt-1 text-3xl font-semibold text-green-600">R$ 0,00</p>
+    </div>
+    <!-- Card Total de Saídas -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-sm font-medium text-slate-500">Total de Saídas</h3>
+        <p id="total-saidas" class="mt-1 text-3xl font-semibold text-red-600">R$ 0,00</p>
+    </div>
+    <!-- Card Saldo Atual -->
+    <div class="bg-white p-6 rounded-lg shadow">
+        <h3 class="text-sm font-medium text-slate-500">Saldo Atual</h3>
+        <p id="saldo-atual" class="mt-1 text-3xl font-semibold text-blue-600">R$ 0,00</p>
+    </div>
+</section>
+
+<!-- Adicionar esta nova secção para o Gráfico -->
+<section class="mb-8">
+     <h2 class="text-2xl font-semibold mb-4">Análise de Categorias</h2>
+     <div class="bg-white p-6 rounded-lg shadow">
+        <div class="chart-container" style="position: relative; height:40vh; width:80vw; max-width: 600px; margin: auto;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+     </div>
+</section>
+
 <section class="mb-8">
     <h2 class="text-2xl font-semibold mb-4">Adicionar Nova Movimentação</h2>
     <form id="add-movimentacao-form" class="bg-white p-6 rounded-lg shadow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
