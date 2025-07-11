@@ -230,6 +230,64 @@ app.delete('/api/movimentacoes/:rowIndex', async (req, res) => {
     }
 });
 
+// Rota para apagar uma linha na aba Clientes
+app.delete('/api/clientes/:rowIndex', async (req, res) => {
+    try {
+        const client = await auth.getClient();
+        const googleSheets = google.sheets({ version: 'v4', auth: client });
+        const rowIndex = parseInt(req.params.rowIndex, 10);
+
+        await googleSheets.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            resource: {
+                requests: [{
+                    deleteDimension: {
+                        range: {
+                            sheetId: 123456789, // SUBSTITUA PELO ID DA SUA ABA 'Clientes'
+                            dimension: 'ROWS',
+                            startIndex: rowIndex,
+                            endIndex: rowIndex + 1
+                        }
+                    }
+                }]
+            }
+        });
+        res.json({ message: 'Cliente apagado com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao apagar cliente:', error.message);
+        res.status(500).send('Erro no servidor ao apagar cliente.');
+    }
+});
+
+// Rota para apagar uma linha na aba Produtos
+app.delete('/api/produtos/:rowIndex', async (req, res) => {
+    try {
+        const client = await auth.getClient();
+        const googleSheets = google.sheets({ version: 'v4', auth: client });
+        const rowIndex = parseInt(req.params.rowIndex, 10);
+
+        await googleSheets.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            resource: {
+                requests: [{
+                    deleteDimension: {
+                        range: {
+                            sheetId: 18808149, // SUBSTITUA PELO ID DA SUA ABA 'Produtos'
+                            dimension: 'ROWS',
+                            startIndex: rowIndex,
+                            endIndex: rowIndex + 1
+                        }
+                    }
+                }]
+            }
+        });
+        res.json({ message: 'Produto apagado com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao apagar produto:', error.message);
+        res.status(500).send('Erro no servidor ao apagar produto.');
+    }
+});
+
 // --- Inicia o Servidor ---
 app.listen(PORT, () => {
     console.log(`Servidor a correr na porta ${PORT}`);
