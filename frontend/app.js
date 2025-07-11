@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // AINDA USANDO O URL LOCAL PARA TESTES
-    const API_BASE_URL = 'http://localhost:3000'; 
+    const API_BASE_URL = 'https://api-caipirao.onrender.com';
 
     // --- LÓGICA DE NAVEGAÇÃO ---
     const navLinks = document.querySelectorAll('.nav-link');
@@ -11,26 +10,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function showPage(pageId) {
         pageContents.forEach(page => page.classList.remove('active'));
         navLinks.forEach(link => link.classList.remove('active'));
-
         const targetPage = document.getElementById(`page-${pageId}`);
         const targetLink = document.querySelector(`a[href="#${pageId}"]`);
-        
         if (targetPage) {
             targetPage.classList.add('active');
             pageTitle.textContent = targetLink.textContent.trim().replace(/^[^\w]+/, '');
         }
-        if (targetLink) {
-            targetLink.classList.add('active');
-        }
-
-        // Carrega os dados específicos da página quando ela é exibida
-        if (pageId === 'movimentacoes' || pageId === 'dashboard') {
-            fetchMovimentacoes();
-        } else if (pageId === 'clientes') {
-            fetchClientes();
-        } else if (pageId === 'produtos') {
-            fetchProdutos();
-        }
+        if (targetLink) targetLink.classList.add('active');
+        if (pageId === 'movimentacoes' || pageId === 'dashboard') fetchMovimentacoes();
+        else if (pageId === 'clientes') fetchClientes();
+        else if (pageId === 'produtos') fetchProdutos();
     }
 
     navLinks.forEach(link => {
@@ -41,32 +30,43 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- FUNÇÃO GENÉRICA DE DELETE ---
+    async function deleteRow(entity, rowIndex) {
+        if (!confirm(`Tem a certeza de que quer apagar esta linha?`)) return;
+        try {
+            const apiRowIndex = rowIndex + 1; // O índice da API é baseado em 1 para a primeira linha de dados
+            const response = await fetch(`${API_BASE_URL}/api/${entity}/${apiRowIndex}`, { method: 'DELETE' });
+            if (!response.ok) throw new Error(`Erro ao apagar! Status: ${response.status}`);
+            alert(`${entity.slice(0, -1)} apagado com sucesso!`);
+            // Recarrega os dados da página ativa
+            const activePageId = document.querySelector('.page-content.active').id.split('-')[1];
+            showPage(activePageId);
+        } catch (error) {
+            console.error(`Erro ao apagar ${entity}:`, error);
+            alert(`Falha ao apagar.`);
+        }
+    }
+
     // --- LÓGICA DA PÁGINA DE PRODUTOS ---
     const produtosContainer = document.getElementById('produtos-container');
     const produtoForm = document.getElementById('add-produto-form');
-
     async function fetchProdutos() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/produtos`);
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
-            createTable(produtosContainer, data);
+            createTable(produtosContainer, data, 'produtos');
         } catch (error) {
             console.error('Erro ao buscar produtos:', error);
             produtosContainer.innerHTML = '<p class="text-red-500">Falha ao carregar os dados dos produtos.</p>';
         }
     }
-
     produtoForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(produtoForm);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch(`${API_BASE_URL}/api/produtos`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
+            const response = await fetch(`${API_BASE_URL}/api/produtos`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
             if (!response.ok) throw new Error(`Erro ao enviar dados! Status: ${response.status}`);
             alert('Produto adicionado com sucesso!');
             produtoForm.reset();
@@ -80,29 +80,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LÓGICA DA PÁGINA DE CLIENTES ---
     const clientesContainer = document.getElementById('clientes-container');
     const clienteForm = document.getElementById('add-cliente-form');
-
     async function fetchClientes() {
         try {
             const response = await fetch(`${API_BASE_URL}/api/clientes`);
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
-            createTable(clientesContainer, data);
+            createTable(clientesContainer, data, 'clientes');
         } catch (error) {
             console.error('Erro ao buscar clientes:', error);
             clientesContainer.innerHTML = '<p class="text-red-500">Falha ao carregar os dados dos clientes.</p>';
         }
     }
-
     clienteForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(clienteForm);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch(`${API_BASE_URL}/api/clientes`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
+            const response = await fetch(`${API_BASE_URL}/api/clientes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
             if (!response.ok) throw new Error(`Erro ao enviar dados! Status: ${response.status}`);
             alert('Cliente adicionado com sucesso!');
             clienteForm.reset();
@@ -132,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
             updateDashboard(data);
-            createTable(movimentacoesContainer, data);
+            createTable(movimentacoesContainer, data, 'movimentacoes');
         } catch (error) {
             console.error('Erro ao buscar dados da API:', error);
             movimentacoesContainer.innerHTML = '<p class="text-red-500">Falha ao carregar os dados. Verifique se o servidor backend está a correr.</p>';
@@ -191,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    function createTable(container, data) {
+    function createTable(container, data, entityName) {
         container.innerHTML = '';
         if (!data || data.length === 0) {
             container.innerHTML = '<p>Nenhum dado encontrado.</p>';
@@ -209,10 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
             th.textContent = headerText;
             headerRow.appendChild(th);
         });
+        const thAcoes = document.createElement('th');
+        thAcoes.className = 'p-3 font-semibold text-right';
+        thAcoes.textContent = 'Ações';
+        headerRow.appendChild(thAcoes);
         thead.appendChild(headerRow);
         table.appendChild(thead);
         const tbody = document.createElement('tbody');
-        data.forEach(rowData => {
+        data.forEach((rowData, index) => {
             const row = document.createElement('tr');
             row.className = 'border-b border-slate-200 hover:bg-slate-50';
             headers.forEach(header => {
@@ -221,6 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 td.textContent = rowData[header];
                 row.appendChild(td);
             });
+            const tdBotao = document.createElement('td');
+            tdBotao.className = 'p-3 text-right';
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Apagar';
+            deleteButton.className = 'bg-red-500 text-white text-xs font-semibold py-1 px-2 rounded-md hover:bg-red-600';
+            deleteButton.addEventListener('click', () => deleteRow(entityName, index));
+            tdBotao.appendChild(deleteButton);
+            row.appendChild(tdBotao);
             tbody.appendChild(row);
         });
         table.appendChild(tbody);
@@ -232,11 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(movimentacaoForm);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch(`${API_BASE_URL}/api/movimentacoes`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-            });
+            const response = await fetch(`${API_BASE_URL}/api/movimentacoes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
             if (!response.ok) throw new Error(`Erro ao enviar dados! Status: ${response.status}`);
             alert('Movimentação adicionada com sucesso!');
             movimentacaoForm.reset();
@@ -247,6 +249,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Mostrar a página inicial
     showPage('dashboard');
 });
