@@ -194,6 +194,42 @@ app.post('/api/precos', async (req, res) => {
     }
 });
 
+// Rota para apagar uma linha na aba _Movimentacoes
+app.delete('/api/movimentacoes/:rowIndex', async (req, res) => {
+    try {
+        const client = await auth.getClient();
+        const googleSheets = google.sheets({ version: 'v4', auth: client });
+        
+        // O :rowIndex na URL virá como um parâmetro
+        const rowIndex = parseInt(req.params.rowIndex, 10);
+
+        // A API do Google Sheets precisa de um pedido mais complexo para apagar linhas
+        await googleSheets.spreadsheets.batchUpdate({
+            spreadsheetId: SPREADSHEET_ID,
+            resource: {
+                requests: [
+                    {
+                        deleteDimension: {
+                            range: {
+                                sheetId: 0, // 0 geralmente é o ID da primeira aba. Ajuste se necessário.
+                                dimension: 'ROWS',
+                                startIndex: rowIndex,
+                                endIndex: rowIndex + 1
+                            }
+                        }
+                    }
+                ]
+            }
+        });
+
+        res.json({ message: `Linha ${rowIndex} apagada com sucesso!` });
+
+    } catch (error) {
+        console.error('Erro ao apagar linha:', error.message);
+        res.status(500).send('Erro no servidor ao apagar a linha.');
+    }
+});
+
 // --- Inicia o Servidor ---
 app.listen(PORT, () => {
     console.log(`Servidor a correr na porta ${PORT}`);
