@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // AINDA USANDO O URL LOCAL PARA TESTES
+    const API_BASE_URL = 'http://localhost:3000'; 
+
     // --- LÓGICA DE NAVEGAÇÃO ---
     const navLinks = document.querySelectorAll('.nav-link');
     const pageContents = document.querySelectorAll('.page-content');
@@ -44,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchProdutos() {
         try {
-            const response = await fetch('http://localhost:3000/api/produtos');
+            const response = await fetch(`${API_BASE_URL}/api/produtos`);
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
             createTable(produtosContainer, data);
@@ -59,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(produtoForm);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch('http://localhost:3000/api/produtos', {
+            const response = await fetch(`${API_BASE_URL}/api/produtos`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -67,13 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`Erro ao enviar dados! Status: ${response.status}`);
             alert('Produto adicionado com sucesso!');
             produtoForm.reset();
-            fetchProdutos(); // Atualiza a tabela
+            fetchProdutos();
         } catch (error) {
             console.error('Erro ao adicionar produto:', error);
             alert('Falha ao adicionar produto.');
         }
     });
-
 
     // --- LÓGICA DA PÁGINA DE CLIENTES ---
     const clientesContainer = document.getElementById('clientes-container');
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchClientes() {
         try {
-            const response = await fetch('http://localhost:3000/api/clientes');
+            const response = await fetch(`${API_BASE_URL}/api/clientes`);
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
             createTable(clientesContainer, data);
@@ -96,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(clienteForm);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch('http://localhost:3000/api/clientes', {
+            const response = await fetch(`${API_BASE_URL}/api/clientes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
@@ -104,13 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`Erro ao enviar dados! Status: ${response.status}`);
             alert('Cliente adicionado com sucesso!');
             clienteForm.reset();
-            fetchClientes(); // Atualiza a tabela
+            fetchClientes();
         } catch (error) {
             console.error('Erro ao adicionar cliente:', error);
             alert('Falha ao adicionar cliente.');
         }
     });
-
 
     // --- LÓGICA DO DASHBOARD E MOVIMENTAÇÕES ---
     const movimentacoesContainer = document.getElementById('movimentacoes-container');
@@ -127,13 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchMovimentacoes() {
         try {
-            const response = await fetch('http://localhost:3000/api/movimentacoes');
+            const response = await fetch(`${API_BASE_URL}/api/movimentacoes`);
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const data = await response.json();
-            
             updateDashboard(data);
             createTable(movimentacoesContainer, data);
-
         } catch (error) {
             console.error('Erro ao buscar dados da API:', error);
             movimentacoesContainer.innerHTML = '<p class="text-red-500">Falha ao carregar os dados. Verifique se o servidor backend está a correr.</p>';
@@ -143,19 +142,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateDashboard(data) {
         let totalEntradas = 0, totalSaidas = 0;
         const categoryTotals = {};
-        data.forEach(mov => {
-            const valorString = mov.Valor || '0';
-            const valor = parseFloat(valorString.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
-            const tipo = mov['Tipo (Entrada/Saída)'];
-            const categoria = mov.Categoria;
-            if (tipo === 'Entrada') {
-                totalEntradas += valor;
-                if (categoria) categoryTotals[categoria] = (categoryTotals[categoria] || 0) + valor;
-            } else if (tipo === 'Saída') {
-                totalSaidas += valor;
-                if (categoria) categoryTotals[categoria] = (categoryTotals[categoria] || 0) + valor;
-            }
-        });
+        if (Array.isArray(data)) {
+            data.forEach(mov => {
+                if (mov && typeof mov === 'object') {
+                    const valorString = mov.Valor || '0';
+                    const valor = parseFloat(valorString.replace('R$', '').replace(/\./g, '').replace(',', '.').trim()) || 0;
+                    const tipo = mov['Tipo (Entrada/Saída)'];
+                    const categoria = mov.Categoria;
+                    if (tipo === 'Entrada') {
+                        totalEntradas += valor;
+                        if (categoria) categoryTotals[categoria] = (categoryTotals[categoria] || 0) + valor;
+                    } else if (tipo === 'Saída') {
+                        totalSaidas += valor;
+                        if (categoria) categoryTotals[categoria] = (categoryTotals[categoria] || 0) + valor;
+                    }
+                }
+            });
+        }
         const saldoAtual = totalEntradas - totalSaidas;
         totalEntradasEl.textContent = formatCurrency(totalEntradas);
         totalSaidasEl.textContent = formatCurrency(totalSaidas);
@@ -188,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // FUNÇÃO GENÉRICA PARA CRIAR TABELAS
     function createTable(container, data) {
         container.innerHTML = '';
         if (!data || data.length === 0) {
@@ -230,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const formData = new FormData(movimentacaoForm);
         const data = Object.fromEntries(formData.entries());
         try {
-            const response = await fetch('http://localhost:3000/api/movimentacoes', {
+            const response = await fetch(`${API_BASE_URL}/api/movimentacoes`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data),
